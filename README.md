@@ -1,72 +1,74 @@
-# Getting Started with Create React App
+# Food Recipe Application (Aplikasi Resep Makanan)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A modern web application to manage and browse food recipes, built with React and Tailwind CSS.
 
-## Available Scripts
+<p align="center">
+  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+  <img src="https://img.shields.io/badge/REST_API-005571?style=for-the-badge&logo=api&logoColor=white" alt="REST API" />
+</p>
 
-In the project directory, you can run:
+## ✨ Features
 
-### `npm start`
+- User and admin authentication (login, register, logout)
+- Browse, search, and view recipe details
+- Create, edit, and delete recipes (admin)
+- Approve recipes (admin)
+- Save/bookmark recipes
+- User and admin dashboards
+- History and suggestions (saran) feature
+- Responsive and modern UI with Tailwind CSS
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## 🚀 Technologies
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- React
+- Tailwind CSS
+- React Router
+- REST API (Laravel backend recommended)
+- Axios
 
-### `npm test`
+## ⚙️ How to Run
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/EvelinSA05/aplikasi-resep-makanan.git
+   cd aplikasi-resep-makanan
+   ```
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+3. **Start the development server**
+   ```bash
+   npm start
+   ```
+   The app will be available at [http://localhost:3000](http://localhost:3000).
 
-### `npm run build`
+> **Note:**  
+> This app expects a running backend REST API (such as [laravel-recipe](https://github.com/EvelinSA05/laravel-recipe)) at `http://127.0.0.1:8000/api/`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 📂 Main Structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `src/App.js` - Main app and route definitions
+- `src/components/` - All UI components and pages
+- `src/Context/ResepContext.js` - Context for recipes and state management
+- `src/index.js` - Entry point
+- `src/index.css` / `src/App.css` - Global and app styles
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## 📝 Customization
 
-### `npm run eject`
+- You can add or edit components in `src/components/` for custom pages or features.
+- To use a different backend, change the API base URL in `src/Context/ResepContext.js`.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🤝 Contribution
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Pull requests are welcome! Feel free to fork and submit improvements or bugfixes.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## 📬 Contact
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+- [GitHub - EvelinSA05](https://github.com/EvelinSA05)
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# aplikasi_resep_makanan
-# aplikasi_resep_makanan
+> **For more details and source code, visit the [GitHub repository](https://github.com/EvelinSA05/aplikasi-resep-makanan).**
