@@ -883,27 +883,43 @@ const DashboardAdmin = () => {
   const token = localStorage.getItem("token");
 
   //function "fetchData"
-  const fetchData = async () => {
+  // const fetchData = async () => {
 
-      //set axios header dengan type Authorization + Bearer token
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-      //fetch user from Rest API
-      await axios.get('http://localhost:8000/api/user')
-          .then((response) => {
+  //     //set axios header dengan type Authorization + Bearer token
+  //     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  //     //fetch user from Rest API
+  //     await axios.get('http://localhost:8000/api/user')
+  //         .then((response) => {
 
-              //set response user to state
-              setUser(response.data);
-          })
-  }
-
-  if(!token) {
-    navigate('/dashboardAdmin');
-  }
+  //             //set response user to state
+  //             setUser(response.data);
+  //         })
+  // }
 
   useEffect(() => {
-    fetchData()
-  }, []);
 
+    const fetchData = async () => {
+
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      await axios.get('http://localhost:8000/api/user')
+      .then((response) => {
+
+          setUser(response.data);
+      })
+    };
+    
+    if(roles) {
+      navigate('/dashboardAdmin');
+    }
+
+    if(!token) {
+      navigate('/');
+    } else
+    {
+      fetchData();
+    };
+
+  }, []);
 
 
     //function logout
@@ -992,7 +1008,7 @@ const DashboardAdmin = () => {
               </div>
             </li>
           </Link>
-          <Link to="/History">
+          {/* <Link to="/History">
             <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
               <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
@@ -1003,19 +1019,8 @@ const DashboardAdmin = () => {
                 <div className="font-medium mt-1 ">Simpan Resep User</div>
               </div>
             </li>
-          </Link>
-          <Link to="/approve">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Approve Resep</div>
-              </div>
-            </li>
-          </Link>
+          </Link> */}
+        
         </ul>
         {/* Add more menu items as needed */}
       </div>
@@ -1282,5 +1287,7 @@ export default DashboardAdmin
 // }
 
 // export default DashboardAdmin;
+
+
 
 

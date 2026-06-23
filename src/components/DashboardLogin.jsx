@@ -199,11 +199,11 @@ export const HomePageUser = () => {
 
   console.log(recipes)
 
-  useEffect(() => {
-    // Filter resep yang disetujui
-    const filteredRecipes = recipes.filter(recipe => recipe.is_approve);
-    setApprovedRecipes(filteredRecipes);
-  }, [recipes]);
+  // useEffect(() => {
+  //   // Filter resep yang disetujui
+  //   const filteredRecipes = recipes.filter(recipe => recipe.is_approve);
+  //   setApprovedRecipes(filteredRecipes);
+  // }, [recipes]);
 
 
   const handleBookmarkClick = (recipeId) => {
@@ -312,7 +312,7 @@ export const HomePageUser = () => {
       setResults(response.data);
 
       // Setelah menerima hasil pencarian, arahkan pengguna ke halaman hasil pencarian
-      navigate(`/search?query=${query}`);
+      navigate(`/search2?query=${query}`);
     } catch (error) {
       console.error(error);
     }
@@ -570,13 +570,13 @@ export const HomePageUser = () => {
 
               {approvedRecipes.map(recipe => (
                 <div key={recipe.id} className="col-md-4 col-sm-12">
-                  <Link to={`/reseps/${recipe.id}/login`}>
+                  <Link to={`/reseps/${recipe.id}/login`} style={{ textDecoration: 'none' }}>
                     <div className="card mt-10">
                       <img src={recipe.image} alt="Uploaded Image" className={styles["foto"]} />
                       <div className="card-body">
                         <div className="card-title">
                           <h4>{recipe.title}</h4>
-                          <h8>{recipe.name}</h8>
+                          <h8>by : {recipe.name}</h8>
                         </div>
                       </div>
                     </div>
@@ -671,7 +671,7 @@ export const HomePageUser = () => {
             <Link to="/dashboardLogin">
               <img src={rumah} alt="rectangle" className={styles["rumah"]} />
             </Link>
-            <Link to="/save">
+            <Link to="/like">
               <img src={save} alt="rectangle" className={styles["save"]} />
             </Link>
             <Link to="/akun">

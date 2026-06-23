@@ -10,6 +10,13 @@
     align-items: center;
 }
 
+.suka {
+    position: relative;
+    bottom: 200px;
+    color: black;
+    left: 200px;
+}
+
 .fotor {
     position: relative;
     text-align: center;

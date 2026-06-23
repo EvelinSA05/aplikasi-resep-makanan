@@ -162,7 +162,7 @@ const RecipeAdmin = () => {
               </div>
             </li>
           </Link>
-          <Link to="/History">
+          {/* <Link to="/History">
             <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
               <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
                 <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
@@ -173,7 +173,7 @@ const RecipeAdmin = () => {
                 <div className="font-medium mt-1 ">Simpan Resep User</div>
               </div>
             </li>
-          </Link>
+          </Link> */}
         </ul>
 
       </div>

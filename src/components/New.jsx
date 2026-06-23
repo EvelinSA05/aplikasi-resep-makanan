@@ -237,7 +237,7 @@ export const New = () => {
               <label htmlFor="name" className="block mb-2 text-sm font-medium">
                 Ingredients
               </label>
-              <input
+              <textarea
                 name="ingredients"
                 // value={formValues.ingredients}
                 onChange={(e) => setIngredients(e.target.value)}
@@ -251,7 +251,7 @@ export const New = () => {
               <label htmlFor="name" className="block mb-2 text-sm font-medium">
                 Step
               </label>
-              <input
+              <textarea
                 name="step"
                 // value={formValues.step}
                 onChange={(e) => setStep(e.target.value)}

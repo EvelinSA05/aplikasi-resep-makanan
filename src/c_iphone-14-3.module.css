@@ -6,24 +6,50 @@
     justify-content: flex-start;
     width: 100%;
   }
+
+  .rectangle30 {
+    width: 100%;
+    left: 58rem;
+    height: auto;
+    margin: 0;
+    display: block;
+    max-width: 130px;
+    height: 38px;
+    border-radius: 7px 7px 7px 7px;
+    margin-left: 150px;
+    position: relative;
+    margin-right: 30px;
+    top: -48px;
+    text-align: center;
+    font-size: medium;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-weight: bolder;
+    color: white;
+    background-color: dodgerblue;
+  }
+
   .foto {
     width: 1000px;
     height: 200px;
   }
+
   .checklist {
     color: black;
     position: relative;
   }
+
   .sampah {
     position: relative;
     bottom: 240px;
     left: 20px;
   }
+
   .tambah {
     position: relative;
     bottom: 270px;
     left: 300px;
   }
+
   .kotak12 {
     position: relative;
     width: 100%;
@@ -31,10 +57,12 @@
     height: 70px;
     position: fixed;
   }
+
   .navbawah {
     bottom: 500px;
     position: fixed;
   }
+
   .navbar {
     position: fixed;
     bottom: 0;
@@ -44,7 +72,7 @@
     padding: 4px;
     height: 45px;
   }
-  
+
   .navbar-list {
     list-style: none;
     margin: 0;
@@ -52,60 +80,60 @@
     display: flex;
     justify-content: space-around;
   }
-  
+
   .navbar-item {
     color: white;
     padding: 0 10px;
     text-decoration: none;
     font-weight: bold;
   }
-  
+
   .navbar-item:hover {
     background-color: #555;
   }
 
   /* Dashboard.css */
 
-/* Style untuk header */
-.navbar {
-  background-color: green;
-  color: white;
-}
+  /* Style untuk header */
+  .navbar {
+    background-color: green;
+    color: white;
+  }
 
-/* Style untuk sidebar */
-.sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 250px;
-  padding-top: 56px;
-  background-color: #2c3e50;
-  color: white;
-}
+  /* Style untuk sidebar */
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 250px;
+    padding-top: 56px;
+    background-color: #2c3e50;
+    color: white;
+  }
 
-.sidebar ul.nav.flex-column {
-  padding-left: 0;
-}
+  .sidebar ul.nav.flex-column {
+    padding-left: 0;
+  }
 
-.sidebar .nav-link {
-  color: rgba(255, 255, 255, 0.5);
-}
+  .sidebar .nav-link {
+    color: rgba(255, 255, 255, 0.5);
+  }
 
-.sidebar .nav-link.active {
-  color: white;
-}
+  .sidebar .nav-link.active {
+    color: white;
+  }
 
-/* Style untuk konten utama */
-.main-content {
-  margin-left: 250px;
-  padding: 15px;
-}
+  /* Style untuk konten utama */
+  .main-content {
+    margin-left: 250px;
+    padding: 15px;
+  }
 
   .navigasi {
     position: sticky;
     top: -10px;
-/* 
+    /* 
     padding: 1rem 2rem;
     display: flex;
     align-items: center;
@@ -129,16 +157,18 @@
     top: 0;
     z-index: 3; */
   }
+
   .kertas01 {
     bottom: 105px;
     width: 100%;
     position: relative;
-      /* text-align: center;
+    /* text-align: center;
       padding: 10px;
       position: fixed;
       bottom: 0;
       width: 100%; */
   }
+
   .card {
     position: relative;
     bottom: 100px;
@@ -146,18 +176,23 @@
     height: 150px;
     width: 150px;
   }
-  .resep{
+
+  .resep {
     position: relative;
-    top: 1000px; 
+    top: 1000px;
   }
+
   .card3 {
     position: relative;
-    top: 70px;   
+    top: 70px;
   }
+
   .card4 {
     position: relative;
-    top: 20px;    
+    top: 20px;
+    left: 20px;
   }
+
   .rectangle9 {
     width: 100%;
     left: 50rem;
@@ -174,13 +209,15 @@
     text-align: center;
     font-size: medium;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-weight:bolder;
+    font-weight: bolder;
     color: white;
     background-color: green;
   }
+
   .rectangle20 {
     visibility: hidden;
   }
+
   .rectangle15 {
     width: 100%;
     left: 50rem;
@@ -197,16 +234,18 @@
     text-align: center;
     font-size: medium;
     font-family: Georgia, 'Times New Roman', Times, serif;
-    font-weight:bolder;
+    font-weight: bolder;
     color: white;
     background-color: red;
     margin-bottom: 12px;
   }
+
   .search2 {
     position: relative;
     left: 0rem;
     top: 0rem;
   }
+
   .rectangle {
     height: auto;
     margin: 0;
@@ -215,18 +254,19 @@
     max-width: 390px;
     position: fixed;
   }
+
   .font1 {
     height: auto;
     margin: 0;
     display: block;
     width: 100%;
     top: 0;
-    left: 9rem;
+    left: 28rem;
     position: relative;
     max-width: 200px;
-    margin-left: auto;
     margin-right: auto;
   }
+
   .sendok {
     height: auto;
     margin: 0;
@@ -238,6 +278,7 @@
     max-width: 30px;
     margin-left: 35px;
   }
+
   .search {
     height: auto;
     margin: 0;
@@ -251,36 +292,43 @@
   }
 
 
-  .text,.text01 {
+  .text,
+  .text01 {
     margin-top: 0;
     text-align: center;
     margin-bottom: 0;
   }
+
   .text {
     width: 100%;
     max-width: 268px;
     min-height: 53px;
   }
+
   .text01 {
     color: #000;
     font-size: 30px;
     font-style: normal;
-    font-family: "Montserrat Alternates",sans-serif;
+    font-family: "Montserrat Alternates", sans-serif;
     font-weight: 400;
     line-height: normal;
     letter-spacing: -.3549606204032898px;
     text-transform: none;
   }
+
   .component {
     max-height: 27px;
   }
-  .component,.vector {
+
+  .component,
+  .vector {
     width: 100%;
     height: auto;
     margin: 0;
     display: block;
     max-width: 24px;
   }
+
   .rectangle1 {
     position: relative;
     height: auto;
@@ -290,6 +338,7 @@
     width: 100%;
     max-width: 390px;
   }
+
   .rumah {
     position: relative;
     height: auto;
@@ -301,6 +350,7 @@
     margin-top: 15px;
     margin-left: 50px;
   }
+
   .save {
     position: relative;
     height: auto;
@@ -311,6 +361,17 @@
     max-width: 30px;
     left: 48%;
   }
+  .like {
+    position: relative;
+    height: auto;
+    margin: 0;
+    display: block;
+    bottom: 100px;
+    width: 100%;
+    max-width: 30px;
+    left: 50rem;
+  }
+
   .save2 {
     position: relative;
     height: auto;
@@ -322,6 +383,7 @@
     left: 88%;
     visibility: hidden;
   }
+
   .save3 {
     position: relative;
     height: auto;
@@ -332,6 +394,7 @@
     max-width: 30px;
     left: 88%;
   }
+
   .save4 {
     position: relative;
     height: auto;
@@ -342,6 +405,7 @@
     max-width: 30px;
     left: 88%;
   }
+
   .akun {
     position: relative;
     height: auto;
@@ -352,10 +416,12 @@
     max-width: 30px;
     left: 89%;
   }
-  .alltext{
+
+  .alltext {
     margin-left: 10px;
     visibility: hidden;
   }
+
   .instance {
     gap: 10px;
     width: 100%;
@@ -372,21 +438,25 @@
     top: 30px;
     margin-left: 10px;
   }
-  .text02,.text03 {
+
+  .text02,
+  .text03 {
     margin-top: 0;
     text-align: left;
     margin-bottom: 0;
   }
+
   .text02 {
     width: 100%;
     max-width: auto;
     min-height: auto;
   }
+
   .text03 {
     color: #fff;
     font-size: 14px;
     font-style: normal;
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: 500;
     line-height: normal;
     letter-spacing: 0;
@@ -394,21 +464,26 @@
     margin-left: 5px;
     margin-top: 2px;
   }
+
   .text04 {
     width: 100%;
     max-width: auto;
     min-height: auto;
   }
-  .text04,.text05,.text06 {
+
+  .text04,
+  .text05,
+  .text06 {
     margin-top: 0;
     text-align: left;
     margin-bottom: 0;
   }
+
   .text05 {
     color: #000;
     font-size: 14px;
     font-style: normal;
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: 500;
     line-height: normal;
     letter-spacing: 0;
@@ -417,16 +492,18 @@
     top: 7px;
     position: relative;
   }
+
   .text06 {
     width: 100%;
     max-width: auto;
     min-height: auto;
   }
+
   .text07 {
     color: #000;
     font-size: 14px;
     font-style: normal;
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: 500;
     line-height: normal;
     letter-spacing: 0;
@@ -435,21 +512,26 @@
     top: -9px;
     position: relative;
   }
-  .text07,.text08,.text09 {
+
+  .text07,
+  .text08,
+  .text09 {
     margin-top: 0;
     text-align: left;
     margin-bottom: 0;
   }
+
   .text08 {
     width: 100%;
     max-width: auto;
     min-height: auto;
   }
+
   .text09 {
     color: #000;
     font-size: 14px;
     font-style: normal;
-    font-family: "Poppins",sans-serif;
+    font-family: "Poppins", sans-serif;
     font-weight: 500;
     line-height: normal;
     letter-spacing: 0;
@@ -458,6 +540,7 @@
     top: -25px;
     position: relative;
   }
+
   /* .rectangle1 {
     width: 100%;
     height: auto;

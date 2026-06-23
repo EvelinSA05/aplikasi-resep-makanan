@@ -314,6 +314,13 @@ function Login() {
     //     }
     // }, []);
   
+    // useEffect(() => {
+
+    //     if(localStorage.getItem('token')) {
+  
+    //         navigate('/');
+    //     }
+    // }, []);
 
     //function "loginHanlder"
     const loginHandler = async (e) => {
@@ -355,7 +362,7 @@ function Login() {
                 <div className="col-md-4">
                     <div className="card border-0 rounded shadow-sm">
                         <div className="card-body">
-                            <h4 className="fw-bold">HALAMAN LOGIN</h4>
+                            <h4 className="fw-bold">HALAMAN LOGIN USER</h4>
                             <hr/>
                             {
                                 errors.message && (
@@ -555,3 +562,4 @@ export default Login;
 // }
 
 // export default LoginUser;
+

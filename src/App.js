@@ -25,6 +25,8 @@ import Akun from "./components/Akun";
 import History from "./components/History";
 import CobaGet from "./components/CobaGet";
 import SearchResults from "./components/SearchResult";
+import SearchResult2 from "./components/SearchResult2";
+import Like from "./components/Like";
 
 import { Routes, Route, Link } from "react-router-dom";
 
@@ -53,6 +55,7 @@ function App() {
         <Route path="/NewAdmin" element={<NewAdmin />} />
         <Route path="/save" element={<Save />} />
         <Route path="/search" element={<SearchResults />} />
+        <Route path="/search2" element={<SearchResult2 />} />
         <Route path="/saran" element={<Saran />} />
         <Route path="/saveAdmin" element={<SaveAdmin />} />
         <Route path="/register" element={<Register />} />
@@ -63,6 +66,7 @@ function App() {
         <Route path="/dashboardLogin" element={<DashboardLogin />} />
         <Route path="/history" element={<History />} />
         <Route path="/CobaGet" element={<CobaGet />} />
+        <Route path="/like" element={<Like />} />
       </Routes>
       </ResepProvider>
   );

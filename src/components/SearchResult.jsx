@@ -54,7 +54,7 @@ function SearchResults() {
   const [results, setResults] = useState([]);
   const navigate = useNavigate();
 
-  
+
   const handleSearch = async () => {
     try {
       const response = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
@@ -66,7 +66,7 @@ function SearchResults() {
       console.error(error);
     }
   }
-  
+
 
   // Lakukan permintaan untuk hasil pencarian dengan query
   // Tampilkan hasil pencarian di halaman ini
@@ -96,7 +96,7 @@ function SearchResults() {
 
   return (
     <>
-          <Navbar
+      <Navbar
         sticky="top"
         expand="lg"
         className="bg-success border-bottom"
@@ -116,72 +116,67 @@ function SearchResults() {
           />
           <div className={styles['search2']}>
             <div className="flex items-center">
-              <input
+              {/* <input
                 type="text"
                 className="border rounded p-1 w-1/7"
                 placeholder="Cari..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
               />
-
-              {/* <button onClick={handleSearch} className="bg-blue-500 text-white rounded p-1 ml-2" type="button">
-                Cari
-              </button> */}
-
-              <button className="bg-blue-500 text-white rounded p-1 ml-2" onClick={handleSearch}>Cari</button>
+              <button className="bg-blue-500 text-white rounded p-1 ml-2" onClick={handleSearch}>Cari</button> */}
             </div>
           </div>
         </Container>
       </Navbar>
 
       <div className={styles["card3"]}>
-      <div className="row">
-      <h2>Hasil Pencarian untuk "{query}"</h2>
-      {/* <ul>
+        <div className="row">
+          <h2>Hasil Pencarian untuk "{query}"</h2>
+          {/* <ul>
           {results.map(result => (
             <li key={result.id}>{result.title}</li>
           ))}
         </ul> */}
-      {reseps.reseps?.map((resep) => {
-        return (
-          // <tr key={resep.id}>
-          //   <td>{resep.image}</td>
-          //   <td>{resep.title}</td>
-          //   <td>{resep.ingredients}</td>
-          //   <td>{resep.step}</td>
-          // </tr>
+          {reseps.reseps?.map((resep) => {
+            return (
+              // <tr key={resep.id}>
+              //   <td>{resep.image}</td>
+              //   <td>{resep.title}</td>
+              //   <td>{resep.ingredients}</td>
+              //   <td>{resep.step}</td>
+              // </tr>
 
 
 
-          <div key={resep.id} className="col-md-4 col-sm-12">
-            <Link to={`/reseps/${resep.id}/login`}>
-              <div className="card">
-                <img src={resep.image} alt="Uploaded Image" className={styles["foto"]} />
-                <div className="card-body">
-                  <div className="card-title">
-                    <h4>{resep.title}</h4>
+              <div key={resep.id} className="col-md-4 col-sm-12">
+                <Link to={`/reseps/${resep.id}`}>
+                  <div className="card">
+                    <img src={resep.image} alt="Uploaded Image" className={styles["foto"]} />
+                    <div className="card-body">
+                      <div className="card-title">
+                        <h4>{resep.title}</h4>
+                      </div>
+                    </div>
+
                   </div>
-                </div>
-
+                </Link>
               </div>
-            </Link>
-          </div>
-        );
-      })}
-         </div>
-          </div>
+            );
+          })}
+        </div>
+      </div>
 
-<nav className={styles["navbar"]}>
-            <Link to="/">
-              <img src={rumah} alt="rectangle" className={styles["rumah"]} />
-            </Link>
-            <Link to="/save">
-              <img src={save} alt="rectangle" className={styles["save"]} />
-            </Link>
-            <Link to="/user">
-              <img src={akun} alt="rectangle" className={styles["akun"]} />
-            </Link>
-          </nav>
+      <nav className={styles["navbar"]}>
+        <Link to="/">
+          <img src={rumah} alt="rectangle" className={styles["rumah"]} />
+        </Link>
+        <Link to="/save">
+          <img src={save} alt="rectangle" className={styles["save"]} />
+        </Link>
+        <Link to="/user">
+          <img src={akun} alt="rectangle" className={styles["akun"]} />
+        </Link>
+      </nav>
     </>
   );
 }

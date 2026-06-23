@@ -321,7 +321,7 @@ function Register() {
         <div className="col-md-8">
             <div className="card border-0 rounded shadow-sm">
                 <div className="card-body">
-                    <h4 className="fw-bold">HALAMAN REGISTER</h4>
+                    <h4 className="fw-bold">HALAMAN REGISTER ADMIN</h4>
                     <hr />
                     <form onSubmit={registerHandler}>
                         <div className="row">

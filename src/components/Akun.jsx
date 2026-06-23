@@ -18,146 +18,165 @@ import axios from 'axios';
 
 function Akun() {
 
-    //state user
-    const [user, setUser] = useState({});
-    const [results, setResults] = useState([]);
-    const roles = localStorage.getItem("roles");
+  //state user
+  const [user, setUser] = useState({});
+  const [results, setResults] = useState([]);
+  const roles = localStorage.getItem("roles");
 
-    //define history
-    const navigate = useNavigate();
-    const [query, setQuery] = useState('');
-    const handleSearch = async () => {
-        try {
-          const response = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
-          setResults(response.data);
-    
-          // Setelah menerima hasil pencarian, arahkan pengguna ke halaman hasil pencarian
-          navigate(`/search?query=${query}`);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    
+  //define history
+  const navigate = useNavigate();
+  const [query, setQuery] = useState('');
+  const handleSearch = async () => {
+    try {
+      const response = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
+      setResults(response.data);
 
-    //token
-    const token = localStorage.getItem("token-user");
+      // Setelah menerima hasil pencarian, arahkan pengguna ke halaman hasil pencarian
+      navigate(`/search?query=${query}`);
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
-    //function "fetchData"
+
+  //token
+  const token = localStorage.getItem("token");
+
+  //function "fetchData"
+  // const fetchData = async () => {
+
+  //   //set axios header dengan type Authorization + Bearer token
+  //   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+  //   //fetch user from Rest API
+  //   await axios.get('http://localhost:8000/api/user')
+  //     .then((response) => {
+
+  //       //set response user to state
+  //       setUser(response.data);
+  //     })
+  // }
+
+  useEffect(() => {
+
     const fetchData = async () => {
 
-        //set axios header dengan type Authorization + Bearer token
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        //fetch user from Rest API
-        await axios.get('http://localhost:8000/api/user')
-            .then((response) => {
-
-                //set response user to state
-                setUser(response.data);
-            })
-    }
-
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+      await axios.get('http://localhost:8000/api/user')
+      .then((response) => {
+  
+          setUser(response.data);
+      })
+    };
     
     if(roles) {
-        navigate('/akun');
-      }
+      navigate('/akun');
+    }
 
-
-    //hook useEffect
-    useEffect(() => {
-
-        //check token empty
-        if (!token) {
-
-            //redirect login page
-            navigate('/');
-        }
-
-        //call function "fetchData"
-        fetchData();
-    }, []);
-
-    //function logout
-    const logoutHanlder = async () => {
-
-        //set axios header dengan type Authorization + Bearer token
-        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-        //fetch Rest API
-        await axios.post('http://localhost:8000/api/logout')
-            .then(() => {
-
-                //remove token from localStorage
-                localStorage.removeItem("token");
-
-                //redirect halaman login
-                navigate('/');
-            });
+    if(!token) {
+      navigate('/');
+    } else
+    {
+      fetchData();
     };
 
-    return (
-        <>
-            <Navbar
-                sticky="top"
-                expand="lg"
-                className="bg-success border-bottom"
-                style={{ height: "85px", fontSize: "20px" }}
-            >
-                <Container>
+  }, []);
 
-                    <img
-                        src={foodrecipes}
-                        alt="rectangle"
-                        className={styles['font1']}
-                    />
-                    <img
-                        src={sendok}
-                        alt="rectangle"
-                        className={styles['sendok']}
-                    />
-                    <div className={styles['search2']}>
-                        <div className="flex items-center">
-                            <input
-                                type="text"
-                                className="border rounded p-1 w-1/7"
-                                placeholder="Cari..."
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                            />
+  // useEffect(() => {
+  //   fetchData()
+  // }, []);
 
-                            {/* <button onClick={handleSearch} className="bg-blue-500 text-white rounded p-1 ml-2" type="button">
-                Cari
-              </button> */}
 
-                            <button className="bg-blue-500 text-white rounded p-1 ml-2" onClick={handleSearch}>Cari</button>
-                        </div>
-                    </div>
-                </Container>
-            </Navbar>
-            <div className="container" style={{ marginTop: "50px" }}>
-                <div className="row justify-content-center">
-                    <div className="col-md-12">
-                        <div className="card border-0 rounded shadow-sm">
-                            <div className="card-body">
-                                SELAMAT DATANG <strong className="text-uppercase">{user.name}</strong>
-                                <hr />
-                                <button onClick={logoutHanlder} className="btn btn-md btn-danger">LOGOUT</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+  // //hook useEffect
+  // useEffect(() => {
+
+  //     //check token empty
+  //     if (!token) {
+
+  //         //redirect login page
+  //         navigate('/');
+  //     }
+
+  //     //call function "fetchData"
+  //     fetchData();
+  // }, []);
+
+  //function logout
+  const logoutHanlder = async () => {
+
+    //set axios header dengan type Authorization + Bearer token
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    //fetch Rest API
+    await axios.post('http://localhost:8000/api/logout')
+      .then(() => {
+
+        //remove token from localStorage
+        localStorage.removeItem("token");
+
+        //redirect halaman login
+        navigate('/');
+      });
+  };
+
+  return (
+    <>
+      <Navbar
+        sticky="top"
+        expand="lg"
+        className="bg-success border-bottom"
+        style={{ height: "85px", fontSize: "20px" }}
+      >
+        <Container>
+
+          <img
+            src={foodrecipes}
+            alt="rectangle"
+            className={styles['font1']}
+          />
+          <img
+            src={sendok}
+            alt="rectangle"
+            className={styles['sendok']}
+          />
+          <div className={styles['search2']}>
+            <div className="flex items-center">
+              {/* <input
+                type="text"
+                className="border rounded p-1 w-1/7"
+                placeholder="Cari..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <button className="bg-blue-500 text-white rounded p-1 ml-2" onClick={handleSearch}>Cari</button> */}
             </div>
-            <nav className={styles["navbar"]}>
-            <Link to="/dashboardLogin">
-              <img src={rumah} alt="rectangle" className={styles["rumah"]} />
-            </Link>
-            <Link to="/save">
-              <img src={save} alt="rectangle" className={styles["save"]} />
-            </Link>
-            <Link to="/akun">
-              <img src={akun} alt="rectangle" className={styles["akun"]} />
-            </Link>
-          </nav>
-        </>
-    )
+          </div>
+        </Container>
+      </Navbar>
+      <div className="container" style={{ marginTop: "50px" }}>
+        <div className="row justify-content-center">
+          <div className="col-md-12">
+            <div className="card border-0 rounded shadow-sm">
+              <div className="card-body">
+                SELAMAT DATANG <strong className="text-uppercase">{user.name}</strong>
+                <hr />
+                <button onClick={logoutHanlder} className="btn btn-md btn-danger">LOGOUT</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <nav className={styles["navbar"]}>
+        <Link to="/dashboardLogin">
+          <img src={rumah} alt="rectangle" className={styles["rumah"]} />
+        </Link>
+        <Link to="/like">
+          <img src={save} alt="rectangle" className={styles["save"]} />
+        </Link>
+        <Link to="/akun">
+          <img src={akun} alt="rectangle" className={styles["akun"]} />
+        </Link>
+      </nav>
+    </>
+  )
 }
 
 export default Akun;
@@ -171,3 +190,6 @@ export default Akun;
 // }
 
 // export default Akun
+
+
+
