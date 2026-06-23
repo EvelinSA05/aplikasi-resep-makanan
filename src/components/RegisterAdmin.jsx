@@ -279,15 +279,18 @@ function Register() {
     formData.append('role', role);
     formData.append('password_confirmation', passwordConfirmation);
 
-    await axios.post('http://localhost:8000/api/register', formData)
-    .then(() => {
-        
+    try {
+        await axios.post('http://localhost:8000/api/registerl', formData);
+        alert("Registrasi Admin Berhasil!");
         navigate('/loginAdmin');
-    })
-    .catch(error => {
-        
-        setErrors(error.response.data);
-    })
+    } catch (error) {
+        console.error("Registration error", error);
+        if(error.response && error.response.data) {
+            setErrors(error.response.data);
+        } else {
+            alert("Gagal terhubung ke server atau terjadi kesalahan internal.");
+        }
+    }
 };
 
   return (

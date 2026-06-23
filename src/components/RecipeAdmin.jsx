@@ -1,31 +1,37 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import styles from "../c_iphone-14-3.module.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import image from "../assets3/image1.png"; //gambar
-import logo from "../assets3/logo.png"; //gambar
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import logo from "../assets3/logo.png";
+import "bootstrap/dist/css/bootstrap.min.css";
 import '../c_iphone-14-5.module.css';
 
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { useParams } from 'react-router-dom';
-
-
-
 const RecipeAdmin = () => {
-  const [recipesA, setRecipeA] = useState([]);
-  const { id } = useParams();
-  const [reseps, setReseps] = useState([]);
-  const [resep, setResep] = useState([]);
-  const navigate = useNavigate();
-  const [results, setResults] = useState([]);
   const [recipes, setRecipes] = useState([]);
-  const [user, setUser] = useState([]);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
   const token = localStorage.getItem('token');
 
-  const [isApprove, setIsApprove] = useState(reseps.is_approve);
+  useEffect(() => {
+    if (!token) {
+      navigate('/loginAdmin');
+      return;
+    }
+
+    const fetchData = async () => {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const responseUser = await axios.get('http://localhost:8000/api/user');
+        setUser(responseUser.data);
+        
+        const responseRecipes = await axios.get('http://localhost:8000/api/reseps');
+        setRecipes(responseRecipes.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
 
   const handleBookmarkClick = (recipeId) => {
     axios.post(`http://127.0.0.1:8000/api/reseps/${recipeId}/approve`)
@@ -43,314 +49,164 @@ const RecipeAdmin = () => {
       });
   };
 
-  if (!token) {
-
-    //redirect login page
-    navigate('/');
-}
-  // useEffect(() => {
-  //   axios.get('http://127.0.0.1:8000/api/user/')
-  //     .then(response => {
-  //       setRecipes(response.data);
-  //     })
-  //     .catch(error => {
-  //       console.error(error);
-  //     });
-  // }, []);
-
-
-  // const [imageData, setImageData] = useState(null);
-
-  // const [itemId, setItemId] = useState('');
-  // const [deleteMessage, setDeleteMessage] = useState('');
-
-  // const handleDelete = () => {
-  //   axios
-  //     .delete(`http://127.0.0.1:8000/api/reseps/${id}`)
-  //     .then(response => {
-  //       setDeleteMessage(response.data.message);
-  //     })
-  //     .catch(error => {
-  //       console.error('Error deleting item:', error);
-  //     });
-  // };
-
   const deletePost = async (id) => {
-
-    //delete with api
     await axios.delete(`http://127.0.0.1:8000/api/reseps/${id}`)
       .then(() => {
-
-        window.location.reload('http://localhost:3000/recipeAdmin');
-
-
-      })
-  }
-
-  useEffect(() => {
-    axios.get('http://127.0.0.1:8000/api/reseps/')
-      .then(response => {
-        setRecipes(response.data);
+        window.location.reload();
       })
       .catch(error => {
-        console.error(error);
+        console.error("Error deleting post:", error);
       });
-  }, []);
+  };
 
-
-  useEffect(() => {
-    // const getReseps = async () => {
-    //   const apiReseps = await axios.get("http://127.0.0.1:8000/api/reseps");
-    //   setReseps(apiReseps.data);
-    // };
-    // getReseps();
-
-    axios.get('http://127.0.0.1:8000/api/reseps')
-      .then(response => {
-        setRecipeA(response.data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-
-  }, []);
-
-  // useEffect(() => {
-  //   const getRecipesA = async () => {
-  //     const apiRecipes = await axios.get("reseps");
-  //     setReseps(apiRecipes.data);
-  //   };
-  //   getRecipesA();
-
+  const logoutHandler = async () => {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      await axios.post('http://localhost:8000/api/logout');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      localStorage.removeItem("token");
+      navigate('/loginAdmin');
+    }
+  };
 
   return (
-    <div className="flex">
-      <div className="sidebar bg-emerald-500 w-52 min-h-screen h-auto flex-shrink-0">
-        <img src={logo} className={styles['logo']} alt="..." />
-        <ul className="-ml-8 text-white ">
-          <Link to="/dashboardAdmin">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-1 w-5 h-5 bi bi-house-door" viewBox="0 0 16 16">
-                  <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146ZM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5Z" />
-                </svg>
-                <div className="font-medium mt-1">Dasboard</div>
-              </div>
+    <div className="flex h-screen bg-slate-50 font-sans">
+      {/* SIDEBAR */}
+      <div className="w-64 bg-emerald-600 text-white flex flex-col shadow-xl z-20 shrink-0">
+        <div className="p-8 flex items-center justify-center border-b border-emerald-500/50">
+          <img src={logo} alt="Logo" className="w-24 h-auto drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
+        </div>
+        <div className="flex-1 overflow-y-auto py-4">
+          <ul className="space-y-1">
+            <li>
+              <Link to="/dashboardAdmin" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+              </Link>
             </li>
-          </Link>
-          <Link to="/NewRecipe">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-plus" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Tambah Resep</div>
-              </div>
+            <li>
+              <Link to="/RecipeAdmin" className="flex items-center px-6 py-3 no-underline hover:no-underline bg-emerald-700 border-l-4 border-emerald-300 text-white font-medium">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                Kelola Resep
+              </Link>
             </li>
-          </Link>
-          <Link to="/RecipeAdmin">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Resep Terbaru</div>
-              </div>
+            <li>
+              <Link to="/History" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Riwayat Tersimpan
+              </Link>
             </li>
-          </Link>
-          {/* <Link to="/History">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Simpan Resep User</div>
-              </div>
+            <li>
+              <Link to="/saran" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                Saran & Kritik
+              </Link>
             </li>
-          </Link> */}
-        </ul>
-
-      </div>
-      <div className="main-content flex-1 bg-lime-100">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4 text-center">Resep Terbaru User</h1>
-          <div className={styles['card4']}>
-            <div className="row">
-              {/* <div className="col-md-4 col-sm-12 mt-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-
-                  </div>
-
-                </Link>
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-trash-fill" className={styles['sampah']} viewBox="0 0 16 16">
-                  <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0z" />
-                </svg>
-
-                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-plus-square" className={styles['tambah']} viewBox="0 0 16 16">
-                  <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h12zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
-                  <path d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
-                </svg>
-              </div> */}
-              {/* <div className="col-md-4 col-sm-12 mb-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-
-              <div className="col-md-4 col-sm-12 mb-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-
-              <div className="col-md-4 col-sm-12 mb-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-
-              <div className="col-md-4 col-sm-12 mb-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-                  </div>
-                </Link>
-              </div>
-
-
-              <div className="col-md-4 col-sm-12 mb-15">
-                <Link to="/recipe">
-                  <div className="card">
-                    <img src={image} className="card-img-top" alt="..." />
-                    <div className="card-body">
-                      <div className="card-title"><h4>Toast with Milk and Strawberry</h4></div>
-                    </div>
-                  </div>
-                </Link>
-              </div> */}
-
-              <div className="relative overflow-x-auto">
-                <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                  <thead className="">
-                    <tr>
-                      <th scope="col" className="px-6 py-3">
-                        Nama Resep
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Image
-                      </th>
-                      <th scope="col" className="px-6 py-3">
-                        Nama Akun
-                      </th>
-                      <th scope="col" className="px-6 py-3"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recipes.map((recipe) => {
-                      return (
-                        <tr
-                          key={recipe.id}
-                          className="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
-                        >
-
-                          <td className="px-6 py-4">{recipe.title}</td>
-                          <img src={recipe.image} width={100} height={70} alt="" />
-                          <td className="px-6 py-4">{recipe.name}</td>
-                          <td>
-                            <Link to={`/reseps/${recipe.id}/admin`}>
-                              <td>
-                                <div>
-                                  <button className="btn btn-warning rounded-sm shadow border-0">DETAIL</button>
-                                </div>
-                              </td>
-                            </Link>
-                          </td>
-                          {/* <button onClick={() => handleApproveClick(recipeA.id)}>
-                                {isApprove ? (
-                                  <div className={styles["rectangleimg2"]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark-plus-fill" viewBox="0 0 16 16">
-                                      <path fillRule="evenodd" d="M2 15.5V2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.74.439L8 13.069l-5.26 2.87A.5.5 0 0 1 2 15.5zm6.5-11a.5.5 0 0 0-1 0V6H6a.5.5 0 0 0 0 1h1.5v1.5a.5.5 0 0 0 1 0V7H10a.5.5 0 0 0 0-1H8.5V4.5z" />
-                                    </svg>
-                                  </div>
-                                ) : (
-                                  <div className={styles["rectangleimg2"]}>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" className="bi bi-bookmark-plus" viewBox="0 0 16 16">
-                                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v13.5a.5.5 0 0 1-.777.416L8 13.101l-5.223 2.815A.5.5 0 0 1 2 15.5V2zm2-1a1 1 0 0 0-1 1v12.566l4.723-2.482a.5.5 0 0 1 .554 0L13 14.566V2a1 1 0 0 0-1-1H4z" />
-                                      <path d="M8 4a.5.5 0 0 1 .5.5V6H10a.5.5 0 0 1 0 1H8.5v1.5a.5.5 0 0 1-1 0V7H6a.5.5 0 0 1 0-1h1.5V4.5A.5.5 0 0 1 8 4z" />
-                                    </svg>
-                                  </div>
-                                )}
-                              </button> */}
-                          {/* <div>
-                          <button className="btn btn-warning rounded-sm shadow border-0">ACCEPT</button>
-                          </div> */}
-                          <td>
-                            <button onClick={() => handleBookmarkClick(recipe.id)}>
-                              {recipe.is_approve ? (
-                                <div>
-                                  <button className="btn btn-success rounded-sm shadow border-0">APPROVED</button>
-                                </div>
-                              ) : (
-                                <div>
-                                  <button className="btn btn-light rounded-sm shadow border-0">APPROVED</button>
-                                </div>
-                              )}
-                            </button>
-                          </td>
-                          <td>
-                            <Link to={`/editAdmin/${recipe.id}`}>
-                              <button className="btn btn-primary rounded-sm shadow border-0">UPDATE</button>
-                            </Link>
-                          </td>
-                          <td>
-                            <button onClick={() => deletePost(recipe.id)} className="btn btn-danger rounded-sm shadow border-0" >
-                              DELETE
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-
-                </table>
-              </div>
-            </div>
-          </div>
-
+          </ul>
+        </div>
+        <div className="p-4 border-t border-emerald-500">
+          <button onClick={logoutHandler} className="w-full flex items-center justify-center px-4 py-2 bg-emerald-700 hover:bg-red-500 text-white rounded transition-colors">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Logout
+          </button>
         </div>
       </div>
+
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col overflow-hidden relative z-10">
+        {/* Header */}
+        <header className="bg-white shadow-sm px-8 py-4 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-gray-800">Kelola Resep</h1>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-gray-800">{user.name || "Memuat..."}</p>
+              <p className="text-xs text-gray-500">{user.email || "Memuat..."}</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
+              {user.name ? user.name.charAt(0).toUpperCase() : 'A'}
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-8">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="p-6 border-b border-slate-100 flex justify-between items-center">
+              <h2 className="text-lg font-bold text-gray-800">Daftar Resep Terbaru</h2>
+              <Link to="/NewRecipe" className="px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md shadow-sm text-sm font-medium transition flex items-center">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"/></svg>
+                Tambah Resep
+              </Link>
+            </div>
+            
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left text-gray-500">
+                <thead className="text-xs text-gray-700 uppercase bg-slate-50 border-b border-slate-100">
+                  <tr>
+                    <th scope="col" className="px-6 py-4 font-semibold">Nama Resep</th>
+                    <th scope="col" className="px-6 py-4 font-semibold text-center">Image</th>
+                    <th scope="col" className="px-6 py-4 font-semibold text-center">Nama Akun</th>
+                    <th scope="col" className="px-6 py-4 font-semibold text-center">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recipes.map((recipe) => (
+                    <tr key={recipe.id} className="bg-white border-b hover:bg-slate-50 transition">
+                      <td className="px-6 py-4 font-medium text-gray-900 align-middle">
+                        {recipe.title}
+                      </td>
+                      <td className="px-6 py-4 align-middle">
+                        <div className="flex justify-center">
+                           <img src={recipe.image} className="w-20 h-14 object-cover rounded-md shadow-sm" alt={recipe.title} />
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center align-middle">{recipe.name}</td>
+                      <td className="px-6 py-4 align-middle">
+                        <div className="flex items-center justify-center space-x-2">
+                          <Link to={`/reseps/${recipe.id}/admin`}>
+                            <button className="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white rounded shadow-sm text-xs font-semibold transition">
+                              DETAIL
+                            </button>
+                          </Link>
+                          
+                          <button onClick={() => handleBookmarkClick(recipe.id)}>
+                            {recipe.is_approve ? (
+                              <div className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded shadow-sm text-xs font-semibold transition">APPROVED</div>
+                            ) : (
+                              <div className="px-3 py-1.5 bg-gray-400 hover:bg-gray-500 text-white rounded shadow-sm text-xs font-semibold transition">APPROVE</div>
+                            )}
+                          </button>
+                          
+                          <Link to={`/editAdmin/${recipe.id}`}>
+                            <button className="px-3 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded shadow-sm text-xs font-semibold transition">
+                              UPDATE
+                            </button>
+                          </Link>
+                          
+                          <button onClick={() => deletePost(recipe.id)} className="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded shadow-sm text-xs font-semibold transition">
+                            DELETE
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {recipes.length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="px-6 py-8 text-center text-gray-400">
+                        Belum ada resep yang tersedia.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
-  )
+  );
 }
 
-export default RecipeAdmin
+export default RecipeAdmin;

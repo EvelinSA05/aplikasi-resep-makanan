@@ -1,68 +1,45 @@
-import React from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
-
-import styles from "../c_iphone-14-3.module.css";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import logo from "../assets3/logo.png";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link } from "react-router-dom";
 import '../c_iphone-14-5.module.css';
 
-import { useContext, useEffect, useState } from "react";
-import ResepContext from '../Context/ResepContext';
-import { useNavigate } from 'react-router-dom';
-
-import axios from 'axios';
-axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
-
 const NewRecipe = () => {
-
   const [image, setImage] = useState('');
   const [title, setTitle] = useState('');
   const [ingredients, setIngredients] = useState('');
   const [step, setStep] = useState('');
   const [name, setName] = useState('');
-
-  const [user, setUser] = useState({});
   const [id, setId] = useState({});
-
   const [errors, setErrors] = useState([]);
-
-  const token = localStorage.getItem("token");
-
-  const navigate = useNavigate();
-
-  console.log(user);
-
-  //function "fetchData"
-  const fetchData = async () => {
-
-    //set axios header dengan type Authorization + Bearer token
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-    //fetch user from Rest API
-    await axios.get('http://localhost:8000/api/user')
-      .then((response) => {
-
-        //set response user to state
-        setName(response.data.name);
-        setId(response.data.id);
-      })
-  }
-
   
-  //hook useEffect
+  const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+
   useEffect(() => {
-
-    //check token empty
     if (!token) {
-
-      //redirect login page
       navigate('/loginAdmin');
+      return;
     }
 
-    //call function "fetchData"
+    const fetchData = async () => {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      try {
+        const response = await axios.get('http://localhost:8000/api/user');
+        setName(response.data.name);
+        setId(response.data.id);
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem("token");
+          navigate('/loginAdmin');
+        }
+      }
+    };
+
     fetchData();
-  }, []);
-  console.log(name)
+  }, [navigate, token]);
 
   const handleFileChange = (e) => {
     setImage(e.target.files[0]);
@@ -72,191 +49,175 @@ const NewRecipe = () => {
     e.preventDefault();
 
     const formData = new FormData();
-
     formData.append('image', image);
     formData.append('title', title);
     formData.append('ingredients', ingredients);
     formData.append('step', step);
     formData.append('name', name);
 
-    await axios.post("reseps", formData)
+    await axios.post("http://127.0.0.1:8000/api/reseps", formData)
       .then(() => {
-
         navigate('/recipeAdmin');
-
-
       })
       .catch(error => {
-
         setErrors(error.response.data);
       })
   }
 
+  const logoutHandler = async () => {
+    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    try {
+      await axios.post('http://localhost:8000/api/logout');
+    } catch (e) {
+      console.error(e);
+    } finally {
+      localStorage.removeItem("token");
+      navigate('/loginAdmin');
+    }
+  };
+
   return (
-    <div className="flex">
-      <div className="sidebar bg-emerald-500 w-52 min-h-screen h-auto flex-shrink-0">
-        <img src={logo} className={styles['logo']} alt="..." />
-        <ul className="-ml-8 text-white ">
-          <Link to="/dashboardAdmin">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-1 w-5 h-5 bi bi-house-door" viewBox="0 0 16 16">
-                  <path d="M8.354 1.146a.5.5 0 0 0-.708 0l-6 6A.5.5 0 0 0 1.5 7.5v7a.5.5 0 0 0 .5.5h4.5a.5.5 0 0 0 .5-.5v-4h2v4a.5.5 0 0 0 .5.5H14a.5.5 0 0 0 .5-.5v-7a.5.5 0 0 0-.146-.354L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293L8.354 1.146ZM2.5 14V7.707l5.5-5.5 5.5 5.5V14H10v-4a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5v4H2.5Z" />
-                </svg>
-                <div className="font-medium mt-1">Dasboard</div>
-              </div>
-            </li>
-          </Link>
-          <Link to="/NewRecipe">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-plus" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M8 5.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V10a.5.5 0 0 1-1 0V8.5H6a.5.5 0 0 1 0-1h1.5V6a.5.5 0 0 1 .5-.5z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Tambah Resep</div>
-              </div>
-            </li>
-          </Link>
-          <Link to="/RecipeAdmin">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Resep Terbaru</div>
-              </div>
-            </li>
-          </Link>
-          {/* <Link to="/History">
-            <li className="px-4 py-2 hover:bg-emerald-400 text-white no-underline">
-              <div className="hover:ml-8 ml-6 duration-500 flex gap-x-4">
-                <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="currentColor" className="mt-3 w-5 h-5 bi bi-journal-check" viewBox="0 0 16 16">
-                  <path fillRule="evenodd" d="M10.854 6.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 1 1 .708-.708L7.5 8.793l2.646-2.647a.5.5 0 0 1 .708 0z" />
-                  <path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2z" />
-                  <path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1H1z" />
-                </svg>
-                <div className="font-medium mt-1 ">Simpan Resep User</div>
-              </div>
-            </li>
-          </Link> */}
-        </ul>
-
-      </div>
-
-      <div className="main-content flex-1 bg-lime-100">
-        <div className="p-6">
-          <h1 className="text-2xl font-bold mb-4 text-center">Tambah Resep</h1>
-
-
-          <div className="max-w-7xl mx-auto min-h-screen">
-          <form
-        encType="multipart/form-data"
-        onSubmit={storeResep}
-
-        className="max-w-md mx-auto p-4 bg-white shadow-md rounded-sm"
-      >
-        <div className="space-y-6">
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-2 text-sm font-medium">
-              Nama Resep
-            </label>
-            <input
-              name="title"
-              onChange={(e) => setTitle(e.target.value)}
-              className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-            />
-            {errors.title && (
-              <span className="text-sm text-red-400">{errors.title[0]}</span>
-            )}
-          </div>
-          {/* <div className="mb-4">
-          <label htmlFor="slug" className="block mb-2 text-sm font-medium">
-            Slug
-          </label>
-          <input
-          type="file"
-            name="image"
-            value={formValues.image}
-            onChange={onChange}
-            className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-          />
-          {errors.image && (
-            <span className="text-sm text-red-400">{errors.image[0]}</span>
-          )}
-        </div> */}
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-2 text-sm font-medium">
-              Image
-            </label>
-            <input
-            type='file'
-              name="ingredients"
-              onChange={handleFileChange}
-              className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-            />
-            {errors.ingredients && (
-              <span className="text-sm text-red-400">{errors.ingredients[0]}</span>
-            )}
-          </div>
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-2 text-sm font-medium">
-              Ingredients
-            </label>
-            <textarea
-              name="ingredients"
-              // value={formValues.ingredients}
-              onChange={(e) => setIngredients(e.target.value)}
-              className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-            />
-            {errors.ingredients && (
-              <span className="text-sm text-red-400">{errors.ingredients[0]}</span>
-            )}
-          </div>
-          <div className="mb-4">
-            <label htmlFor="name" className="block mb-2 text-sm font-medium">
-              Step
-            </label>
-            <textarea
-              name="step"
-              // value={formValues.step}
-              onChange={(e) => setStep(e.target.value)}
-              className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-            />
-            {errors.step && (
-              <span className="text-sm text-red-400">{errors.step[0]}</span>
-            )}
-          </div>
-          <div className="mb-4" hidden>
-            <label htmlFor="name" className="block mb-2 text-sm font-medium">
-              Nama Akun
-            </label>
-            <input
-              name="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="border border-gray-300 text-gray-900 text-sm rounded-md block w-full p-2"
-            />
-            {errors.namaakun && (
-              <span className="text-sm text-red-400">{errors.namaakun[0]}</span>
-            )}
-          </div>
+    <div className="flex h-screen bg-slate-50 font-sans">
+      {/* SIDEBAR */}
+      <div className="w-64 bg-emerald-600 text-white flex flex-col shadow-xl z-20 shrink-0">
+        <div className="p-8 flex items-center justify-center border-b border-emerald-500/50">
+          <img src={logo} alt="Logo" className="w-24 h-auto drop-shadow-lg transform hover:scale-105 transition-transform duration-300" />
         </div>
-        <div className="my-4">
-          <button className="px-4 py-2 bg-indigo-500 hover:bg-indigo-700 text-white rounded-md">
-            Store
+        <div className="flex-1 overflow-y-auto py-4">
+          <ul className="space-y-1">
+            <li>
+              <Link to="/dashboardAdmin" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Dashboard
+              </Link>
+            </li>
+            <li>
+              <Link to="/RecipeAdmin" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/></svg>
+                Kelola Resep
+              </Link>
+            </li>
+            <li>
+              <Link to="/History" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                Riwayat Tersimpan
+              </Link>
+            </li>
+            <li>
+              <Link to="/saran" className="flex items-center px-6 py-3 no-underline hover:no-underline text-emerald-100 hover:bg-emerald-500 hover:text-white transition-colors">
+                <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                Saran & Kritik
+              </Link>
+            </li>
+          </ul>
+        </div>
+        <div className="p-4 border-t border-emerald-500">
+          <button onClick={logoutHandler} className="w-full flex items-center justify-center px-4 py-2 bg-emerald-700 hover:bg-red-500 text-white rounded transition-colors">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            Logout
           </button>
         </div>
-      </form>
-          </div>
+      </div>
 
-        </div>
+      {/* MAIN CONTENT */}
+      <div className="flex-1 flex flex-col overflow-hidden relative z-10">
+        {/* Header */}
+        <header className="bg-white shadow-sm px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center">
+            <Link to="/RecipeAdmin" className="text-gray-400 hover:text-emerald-500 mr-4 transition-colors">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+            </Link>
+            <h1 className="text-2xl font-bold text-gray-800">Tambah Resep Baru</h1>
+          </div>
+          <div className="flex items-center space-x-4">
+            <div className="text-right">
+              <p className="text-sm font-semibold text-gray-800">{name || "Memuat..."}</p>
+            </div>
+            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold">
+              {name ? name.charAt(0).toUpperCase() : 'A'}
+            </div>
+          </div>
+        </header>
+
+        {/* Content */}
+        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-50 p-8">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-8">
+              <form encType="multipart/form-data" onSubmit={storeResep}>
+                <div className="space-y-6">
+                  {/* Nama Resep */}
+                  <div>
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Nama Resep</label>
+                    <input
+                      type="text"
+                      name="title"
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50 hover:bg-white"
+                      placeholder="Contoh: Nasi Goreng Spesial"
+                    />
+                    {errors.title && <span className="text-xs text-red-500 mt-1 block">{errors.title[0]}</span>}
+                  </div>
+
+                  {/* Image */}
+                  <div>
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Foto Resep</label>
+                    <input
+                      type="file"
+                      name="image"
+                      onChange={handleFileChange}
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50 hover:bg-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-emerald-50 file:text-emerald-700 hover:file:bg-emerald-100"
+                    />
+                    {errors.image && <span className="text-xs text-red-500 mt-1 block">{errors.image[0]}</span>}
+                  </div>
+
+                  {/* Ingredients */}
+                  <div>
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Bahan-bahan (Ingredients)</label>
+                    <textarea
+                      name="ingredients"
+                      onChange={(e) => setIngredients(e.target.value)}
+                      rows="4"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50 hover:bg-white resize-none"
+                      placeholder="Masukkan bahan-bahan yang dibutuhkan..."
+                    />
+                    {errors.ingredients && <span className="text-xs text-red-500 mt-1 block">{errors.ingredients[0]}</span>}
+                  </div>
+
+                  {/* Step */}
+                  <div>
+                    <label className="block mb-2 text-sm font-semibold text-gray-700">Langkah-langkah (Steps)</label>
+                    <textarea
+                      name="step"
+                      onChange={(e) => setStep(e.target.value)}
+                      rows="5"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all bg-gray-50 hover:bg-white resize-none"
+                      placeholder="Jelaskan langkah-langkah pembuatan..."
+                    />
+                    {errors.step && <span className="text-xs text-red-500 mt-1 block">{errors.step[0]}</span>}
+                  </div>
+
+                  {/* Hidden Name */}
+                  <div hidden>
+                    <input name="name" value={name} readOnly />
+                  </div>
+                </div>
+
+                <div className="mt-8 flex justify-end gap-3">
+                  <Link to="/RecipeAdmin" className="px-6 py-2.5 bg-gray-100 text-gray-700 font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                    Batal
+                  </Link>
+                  <button type="submit" className="px-6 py-2.5 bg-emerald-600 text-white font-medium rounded-lg hover:bg-emerald-700 shadow-sm shadow-emerald-200 transition-colors flex items-center">
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/></svg>
+                    Simpan Resep
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </main>
       </div>
     </div>
-  )
+  );
 }
 
-export default NewRecipe
+export default NewRecipe;
