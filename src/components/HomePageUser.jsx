@@ -184,29 +184,26 @@ export const HomePageUser = () => {
           <span className="section-title">Resep Terpopuler Minggu Ini</span>
         </div>
         <div className="trending-grid">
-          {[
-            { rank: '#1 Trending', title: 'Sate Maranggi Khas Purwakarta', time: '45 mnt', likes: '1.2k' },
-            { rank: '#2 Trending', title: 'Ayam Woku Belanga Pedas', time: '60 mnt', likes: '950' },
-          ].map((item, i) => (
-            <div key={i} className="trending-card">
+          {reseps.slice(0, 2).map((resep, i) => (
+            <Link to={`/reseps/${resep.id}`} key={resep.id} className="trending-card" style={{ textDecoration: 'none', color: 'inherit' }}>
               <div className="trending-img">
-                <img src={sushi} alt="trending" />
+                <img src={resep.image} alt={resep.title} />
               </div>
               <div className="trending-body">
-                <span className="trending-rank">{item.rank}</span>
-                <div className="trending-title">{item.title}</div>
+                <span className="trending-rank">#{i + 1} Trending</span>
+                <div className="trending-title">{resep.title}</div>
                 <div className="trending-stats">
                   <div className="trending-stat">
                     <svg width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                    {item.time}
+                    45 mnt
                   </div>
                   <div className="trending-stat">
                     <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                    {item.likes} Suka
+                    {1200 - i * 250} Suka
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
@@ -255,7 +252,7 @@ export const HomePageUser = () => {
                 </p>
                 <div className="recipe-card-footer">
                   {resep.name ? <span className="recipe-card-author">oleh <strong>{resep.name}</strong></span> : <span></span>}
-                  <Link to={`reseps/${resep.id}`} className="recipe-card-link">Lihat &rarr;</Link>
+                  <Link to={`reseps/${resep.id}`} className="recipe-card-link">Lihat</Link>
                 </div>
               </div>
             </div>
@@ -298,7 +295,7 @@ export const HomePageUser = () => {
                 </p>
                 <div className="recipe-card-footer">
                   <span className="recipe-card-author">sumber: <strong>TheMealDB API</strong></span>
-                  <a href={meal.strSource || meal.strYoutube} target="_blank" rel="noreferrer" className="recipe-card-link">Resep Asli &rarr;</a>
+                  <a href={meal.strSource || meal.strYoutube} target="_blank" rel="noreferrer" className="recipe-card-link">Resep Asli</a>
                 </div>
               </div>
             </div>
