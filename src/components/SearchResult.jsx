@@ -1,45 +1,8 @@
-// import React from 'react';
-// import { useParams } from 'react-router-dom';
-// import { useState, useEffect, useContext } from "react";
-// import axios from 'axios';
-
-// function SearchResults() {
-//   const { keyword } = useParams();
-//   const [recipes, setRecipes] = useState([]);
-
-//     axios.get(`http://127.0.0.1:8000/api/reseps/search?keyword=${keyword}`)
-//       .then((response) => {
-//         setRecipes(response.data.recipes);
-//       })
-//       .catch((error) => {
-//         console.error(error);
-//       });
-
-
-//   return (
-//     <div>
-//       <h2>Hasil Pencarian untuk "{keyword}"</h2>
-//       <ul>
-//         {recipes.map((recipe) => (
-//           <li key={recipe.id}>{recipe.title}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// }
-
-// export default SearchResults;
-
-import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
-import { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useRef } from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
-import styles from "../c_iphone-14-3.module.css";
-import Container from "react-bootstrap/Container";
-import foodrecipes from "../assets3/foodrecipes.png";
-import Navbar from "react-bootstrap/Navbar";
+import './Premium.css';
+
 import sendok from "../assets3/sendok.png";
 import rumah from "../assets3/rumah.png";
 import save from "../assets3/save.png";
@@ -47,172 +10,188 @@ import akun from "../assets3/akun.png";
 
 function SearchResults() {
   const { search } = useLocation();
-  const query = new URLSearchParams(search).get('query');
+  const query = new URLSearchParams(search).get('query') || '';
+  const [localQuery, setLocalQuery] = useState(query);
   const [reseps, setReseps] = useState([]);
-  const [notFound, setNotFound] = useState(false);
-  const [setQuery] = useState('');
-  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef(null);
   const navigate = useNavigate();
 
-
-  const handleSearch = async () => {
-    try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
-      setResults(response.data);
-
-      // Setelah menerima hasil pencarian, arahkan pengguna ke halaman hasil pencarian
-      navigate(`/search?query=${query}`);
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
-  // Lakukan permintaan untuk hasil pencarian dengan query
-  // Tampilkan hasil pencarian di halaman ini
-
   useEffect(() => {
-    // Lakukan permintaan pencarian dengan query ke server
-    // Simpan hasil pencarian dalam state 'results'
-
-    //   axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`)
-    //     .then(response => setReseps(response.data))
-    //     .catch(error => console.error(error));
-    // }, [query]);
-
-    axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`)
-      .then(response => setReseps(response.data))
-      .catch(error => console.error(error));
+    const fetchResults = async () => {
+      setLoading(true);
+      try {
+        const response = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
+        if (response.data.reseps) {
+            setReseps(response.data.reseps);
+        } else if (Array.isArray(response.data)) {
+            setReseps(response.data);
+        } else {
+            setReseps([]);
+        }
+      } catch (error) {
+        console.error("Error fetching search results:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (query) {
+        fetchResults();
+    }
   }, [query]);
 
-  // useEffect(() => {
-  //   const getReseps = async () => {
-  //     const apiReseps = await axios.get(`http://127.0.0.1:8000/api/reseps/search?query=${query}`);
-  //     setReseps(apiReseps.data);
-  //   };
-  //   getReseps();
-  // }, []);
+  useEffect(() => {
+    const close = (e) => { if (menuRef.current && !menuRef.current.contains(e.target)) setMenuOpen(false); };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
 
+  const handleSearch = () => {
+    if (!localQuery.trim()) return;
+    navigate(`/search?query=${localQuery}`);
+  };
+
+  const loginCoba = () => {
+    if (window.confirm("Anda Belum Login! Apakah Anda ingin login?")) navigate("/login");
+  };
 
   return (
-    <>
-      <Navbar
-        sticky="top"
-        expand="lg"
-        className="bg-success border-bottom"
-        style={{ height: "85px", fontSize: "20px" }}
-      >
-        <Container>
+    <div style={{ background: '#fafaf8', minHeight: '100vh', paddingBottom: '80px' }}>
+      {/* ===== NAVBAR ===== */}
+      <nav className="nav-main">
+        <div className="nav-inner">
+          <Link to="/" className="nav-logo">
+            <div className="nav-logo-icon"><img src={sendok} alt="logo" /></div>
+            <span className="nav-logo-text">Food Recipes</span>
+          </Link>
 
-          <img
-            src={foodrecipes}
-            alt="rectangle"
-            className={styles['font1']}
-          />
-          <img
-            src={sendok}
-            alt="rectangle"
-            className={styles['sendok']}
-          />
-          <div className={styles['search2']}>
-            <div className="flex items-center">
-              {/* <input
-                type="text"
-                className="border rounded p-1 w-1/7"
-                placeholder="Cari..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
-              <button className="bg-blue-500 text-white rounded p-1 ml-2" onClick={handleSearch}>Cari</button> */}
+          <div className="nav-search">
+            <input
+              type="text" placeholder="Cari resep..."
+              value={localQuery}
+              onChange={e => setLocalQuery(e.target.value)}
+              onKeyPress={e => e.key === 'Enter' && handleSearch()}
+            />
+            <button className="nav-search-btn" onClick={handleSearch}>
+              <svg width="16" height="16" fill="none" stroke="white" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            </button>
+          </div>
+
+          <div className="nav-actions">
+            <button onClick={loginCoba} className="btn-outline-nav">+ Resep Baru</button>
+            <Link to="/login" className="btn-solid-nav">Masuk</Link>
+
+            <div ref={menuRef} style={{ position: 'relative' }}>
+              <button className="menu-toggle" onClick={() => setMenuOpen(!menuOpen)}>
+                <svg width="15" height="15" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24"><path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+                <div className="menu-avatar">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                </div>
+              </button>
+              {menuOpen && (
+                <div className="menu-dropdown">
+                  <Link to="/" onClick={() => setMenuOpen(false)}>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                    Home
+                  </Link>
+                  <button onClick={() => { setMenuOpen(false); loginCoba(); }}>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                    Tersimpan
+                  </button>
+                  <div className="menu-divider"></div>
+                  <button onClick={() => { setMenuOpen(false); loginCoba(); }}>
+                    <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    Profil
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        </Container>
-      </Navbar>
-
-      <div className={styles["card3"]}>
-        <div className="row">
-          <h2>Hasil Pencarian untuk "{query}"</h2>
-          {/* <ul>
-          {results.map(result => (
-            <li key={result.id}>{result.title}</li>
-          ))}
-        </ul> */}
-          {reseps.reseps?.map((resep) => {
-            return (
-              // <tr key={resep.id}>
-              //   <td>{resep.image}</td>
-              //   <td>{resep.title}</td>
-              //   <td>{resep.ingredients}</td>
-              //   <td>{resep.step}</td>
-              // </tr>
-
-
-
-              <div key={resep.id} className="col-md-4 col-sm-12">
-                <Link to={`/reseps/${resep.id}`}>
-                  <div className="card">
-                    <img src={resep.image} alt="Uploaded Image" className={styles["foto"]} />
-                    <div className="card-body">
-                      <div className="card-title">
-                        <h4>{resep.title}</h4>
-                      </div>
-                    </div>
-
-                  </div>
-                </Link>
-              </div>
-            );
-          })}
         </div>
+      </nav>
+
+      {/* ===== SEARCH RESULTS ===== */}
+      <div className="section" style={{ marginTop: '48px', minHeight: '50vh' }}>
+        <div className="section-header">
+          <span className="section-title">Hasil Pencarian</span>
+          <span className="section-subtitle">Menampilkan hasil untuk "{query}"</span>
+        </div>
+
+        {loading ? (
+            <div style={{ textAlign: 'center', marginTop: '40px', color: '#64748b' }}>
+                Mencari resep...
+            </div>
+        ) : reseps.length > 0 ? (
+          <div className="recipe-grid">
+            {reseps.map(resep => (
+              <div key={resep.id} className="recipe-card">
+                <Link to={`/reseps/${resep.id}`} className="recipe-card-img" style={{ textDecoration: 'none' }}>
+                  <img src={resep.image} alt={resep.title} />
+                  <button className="recipe-card-save" onClick={e => { e.preventDefault(); loginCoba(); }}>
+                    <svg width="16" height="16" fill="none" stroke="#475569" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                  </button>
+                </Link>
+                <div className="recipe-card-body">
+                  <Link to={`/reseps/${resep.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <div className="recipe-card-title">{resep.title}</div>
+                  </Link>
+                  <p className="recipe-card-desc">
+                    {resep.ingredients ? resep.ingredients.substring(0, 90) + '...' : 'Klik untuk melihat bahan dan langkah pembuatan.'}
+                  </p>
+                  <div className="recipe-card-footer">
+                    {resep.name ? <span className="recipe-card-author">oleh <strong>{resep.name}</strong></span> : <span></span>}
+                    <Link to={`/reseps/${resep.id}`} className="recipe-card-link">Lihat &rarr;</Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+            <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                <svg width="64" height="64" fill="none" stroke="#cbd5e1" strokeWidth="1.5" viewBox="0 0 24 24" style={{ margin: '0 auto 16px' }}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                </svg>
+                <h3 style={{ color: '#475569', fontSize: '20px', marginBottom: '8px' }}>Pencarian Tidak Ditemukan</h3>
+                <p style={{ color: '#94a3b8' }}>Kami tidak dapat menemukan resep untuk "{query}". Silakan coba dengan kata kunci lain.</p>
+            </div>
+        )}
       </div>
 
-      <nav className={styles["navbar"]}>
-        <Link to="/">
-          <img src={rumah} alt="rectangle" className={styles["rumah"]} />
-        </Link>
-        <Link to="/save">
-          <img src={save} alt="rectangle" className={styles["save"]} />
-        </Link>
-        <Link to="/user">
-          <img src={akun} alt="rectangle" className={styles["akun"]} />
-        </Link>
+      {/* ===== FOOTER ===== */}
+      <div className="site-footer" style={{ marginTop: '72px', paddingBottom: '24px' }}>
+        <div className="footer-inner">
+          <div className="footer-brand">
+            <h3><img src={sendok} alt="logo" /> Food Recipes</h3>
+            <p>Platform berbagi resep masakan terlengkap di Indonesia. Temukan dan bagikan resep favoritmu bersama komunitas pecinta kuliner.</p>
+          </div>
+          <div className="footer-col">
+            <h4>Navigasi</h4>
+            <ul>
+              <li><Link to="/">Home</Link></li>
+              <li><button onClick={loginCoba}>Resep Tersimpan</button></li>
+              <li><button onClick={loginCoba}>Tambah Resep</button></li>
+            </ul>
+          </div>
+          <div className="footer-col">
+            <h4>Akun</h4>
+            <ul>
+              <li><Link to="/login">Login</Link></li>
+              <li><Link to="/register">Register</Link></li>
+            </ul>
+          </div>
+        </div>
+        <div className="footer-bottom">&copy; 2026 Food Recipes. All rights reserved.</div>
+      </div>
+
+      {/* ===== MOBILE BOTTOM NAV ===== */}
+      <nav className="mobile-nav pb-safe">
+        <Link to="/"><img src={rumah} alt="home" /><span>Home</span></Link>
+        <button onClick={loginCoba}><img src={save} alt="save" /><span>Simpan</span></button>
+        <button onClick={loginCoba}><img src={akun} alt="akun" /><span>Profil</span></button>
       </nav>
-    </>
+    </div>
   );
 }
-
-//   if (reseps.length === 0) {
-//     return (
-//       <div>
-//         <h2>Hasil Pencarian untuk "{query}"</h2>
-//         <p>Tidak ada hasil ditemukan.</p>
-//       </div>
-//     );
-//   } else {
-//     return (
-//       <div>
-//         <h2>Hasil Pencarian untuk "{query}"</h2>
-//         {reseps.reseps?.map((resep) => {
-//           return (
-//              <div key={resep.id} className="col-md-4 col-sm-12">
-//               <Link to={`reseps/${resep.id}`}>
-//                 <div className="card">
-//                   <img src={resep.image} alt="Uploaded Image" className={styles["foto"]} />
-//                   <div className="card-body">
-//                     <div className="card-title">
-//                       <h4>{resep.title}</h4>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </Link>
-//             </div>
-//           );
-//         })}
-//       </div>
-//     );
-//   }
-// }
-
-
 
 export default SearchResults;

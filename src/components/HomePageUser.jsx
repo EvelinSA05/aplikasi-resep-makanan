@@ -22,6 +22,7 @@ axios.defaults.baseURL = "http://127.0.0.1:8000/api/";
 
 export const HomePageUser = () => {
   const [reseps, setReseps] = useState([]);
+  const [externalReseps, setExternalReseps] = useState([]);
   const { formValues, onChange, errors } = useContext(ResepContext);
   const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -38,6 +39,17 @@ export const HomePageUser = () => {
 
   useEffect(() => {
     axios.get("reseps").then(r => setReseps(r.data)).catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    // Fetch global recipes from TheMealDB API
+    axios.get("https://www.themealdb.com/api/json/v1/1/search.php?s=")
+      .then(response => {
+        if (response.data.meals) {
+          setExternalReseps(response.data.meals.slice(0, 8)); // Ambil 8 resep saja
+        }
+      })
+      .catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -163,7 +175,7 @@ export const HomePageUser = () => {
             ></textarea>
             <button className="ai-btn" onClick={e => { e.preventDefault(); loginCoba(); }}>
               <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
-              Generate Resep dengan AI ✨
+              Generate Resep dengan AI
             </button>
           </div>
         </div>
@@ -227,6 +239,40 @@ export const HomePageUser = () => {
                 <div className="recipe-card-footer">
                   {resep.name ? <span className="recipe-card-author">oleh <strong>{resep.name}</strong></span> : <span></span>}
                   <Link to={`reseps/${resep.id}`} className="recipe-card-link">Lihat &rarr;</Link>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ===== GLOBAL RECIPES (TheMealDB API) ===== */}
+      <div className="section" style={{ marginTop: '72px' }}>
+        <div className="section-header">
+          <span className="section-title">Resep Mancanegara Terlengkap</span>
+          <span className="section-subtitle">Powered by TheMealDB API</span>
+        </div>
+        <div className="recipe-grid">
+          {externalReseps.map(meal => (
+            <div key={meal.idMeal} className="recipe-card">
+              <div className="recipe-card-img" style={{ cursor: 'pointer' }} onClick={() => window.open(meal.strSource || meal.strYoutube, "_blank")}>
+                <img src={meal.strMealThumb} alt={meal.strMeal} />
+                <button className="recipe-card-save" onClick={e => { e.stopPropagation(); loginCoba(); }}>
+                  <svg width="16" height="16" fill="none" stroke="#475569" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                </button>
+              </div>
+              <div className="recipe-card-body">
+                <div className="recipe-card-title" style={{ cursor: 'pointer' }} onClick={() => window.open(meal.strSource || meal.strYoutube, "_blank")}>
+                  {meal.strMeal}
+                </div>
+                <p className="recipe-card-desc">
+                  Kategori: <strong>{meal.strCategory}</strong> | Asal: <strong>{meal.strArea}</strong>
+                  <br />
+                  <span style={{ fontSize: '12px', color: '#64748b' }}>Data langsung ditarik dari API global secara real-time.</span>
+                </p>
+                <div className="recipe-card-footer">
+                  <span className="recipe-card-author">sumber: <strong>TheMealDB API</strong></span>
+                  <a href={meal.strSource || meal.strYoutube} target="_blank" rel="noreferrer" className="recipe-card-link">Resep Asli &rarr;</a>
                 </div>
               </div>
             </div>
