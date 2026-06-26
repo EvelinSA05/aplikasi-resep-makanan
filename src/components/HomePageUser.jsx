@@ -26,6 +26,7 @@ export const HomePageUser = () => {
   const { formValues, onChange, errors } = useContext(ResepContext);
   const [query, setQuery] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('Semua');
   const menuRef = useRef(null);
   const navigate = useNavigate();
 
@@ -61,6 +62,14 @@ export const HomePageUser = () => {
   const loginCoba = () => {
     if (window.confirm("Anda Belum Login! Apakah Anda ingin login?")) navigate("/login");
   };
+
+  const filteredReseps = reseps.filter(resep => {
+    if (activeCategory === 'Semua') return true;
+    const catLower = activeCategory.toLowerCase();
+    const title = (resep.title || '').toLowerCase();
+    const ingredients = (resep.ingredients || '').toLowerCase();
+    return title.includes(catLower) || ingredients.includes(catLower);
+  });
 
   return (
     <div style={{ background: '#fafaf8', minHeight: '100vh', paddingBottom: '80px' }}>
@@ -143,19 +152,7 @@ export const HomePageUser = () => {
         </div>
       </div>
 
-      {/* ===== CATEGORIES ===== */}
-      <div className="section" style={{ marginTop: '48px' }}>
-        <div className="section-header">
-          <span className="section-title">Jelajahi Kategori</span>
-        </div>
-        <div className="cat-pills hide-scrollbar">
-          {['Semua', 'Sarapan', 'Makan Siang', 'Makan Malam', 'Snack', 'Minuman', 'Dessert', 'Sehat', 'Cepat Saji', 'Tradisional'].map((cat, i) => (
-            <button key={i} className="cat-pill" style={i === 0 ? { background: '#16a34a', color: 'white', borderColor: '#16a34a' } : {}}>
-              {cat}
-            </button>
-          ))}
-        </div>
-      </div>
+
 
       {/* ===== AI RECIPE GENERATOR ===== */}
       <div className="section" style={{ marginTop: '56px' }}>
@@ -214,14 +211,34 @@ export const HomePageUser = () => {
         </div>
       </div>
 
+      {/* ===== CATEGORIES ===== */}
+      <div className="section" style={{ marginTop: '56px' }}>
+        <div className="section-header">
+          <span className="section-title">Jelajahi Kategori</span>
+        </div>
+        <div className="cat-pills hide-scrollbar">
+          {['Semua', 'Sarapan', 'Makan Siang', 'Makan Malam', 'Snack', 'Minuman', 'Dessert', 'Sehat', 'Cepat Saji', 'Tradisional'].map((cat, i) => (
+            <button 
+              key={i} 
+              className="cat-pill" 
+              style={activeCategory === cat ? { background: '#16a34a', color: 'white', borderColor: '#16a34a' } : {}}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* ===== RECIPES ===== */}
       <div className="section" style={{ marginTop: '48px' }}>
         <div className="section-header">
           <span className="section-title">Resep Terbaru</span>
-          <span className="section-subtitle">{reseps.length} resep</span>
+          <span className="section-subtitle">{filteredReseps.length} resep</span>
         </div>
-        <div className="recipe-grid">
-          {reseps.map(resep => (
+        {filteredReseps.length > 0 ? (
+          <div className="recipe-grid">
+            {filteredReseps.map(resep => (
             <div key={resep.id} className="recipe-card">
               <Link to={`reseps/${resep.id}`} className="recipe-card-img" style={{ textDecoration: 'none' }}>
                 <img src={resep.image} alt={resep.title} />
@@ -243,7 +260,16 @@ export const HomePageUser = () => {
               </div>
             </div>
           ))}
-        </div>
+          </div>
+        ) : (
+          <div style={{ textAlign: 'center', padding: '40px 0' }}>
+            <svg width="48" height="48" fill="none" stroke="#cbd5e1" strokeWidth="1.5" viewBox="0 0 24 24" style={{ margin: '0 auto 12px' }}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+            <p style={{ color: '#64748b', fontSize: '15px' }}>Belum ada resep untuk kategori <strong>{activeCategory}</strong>.</p>
+            <button onClick={() => setActiveCategory('Semua')} style={{ marginTop: '12px', background: 'none', border: 'none', color: '#16a34a', fontWeight: '600', cursor: 'pointer' }}>Lihat Semua Resep</button>
+          </div>
+        )}
       </div>
 
       {/* ===== GLOBAL RECIPES (TheMealDB API) ===== */}
